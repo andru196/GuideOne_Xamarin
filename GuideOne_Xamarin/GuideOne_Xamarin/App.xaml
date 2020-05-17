@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="GuideOne_Xamarin.App">
+    <Application.Resources>
+		<ResourceDictionary>
+			<x:String x:Key="ServerUri">192.168.1.254:58127</x:String>
+		</ResourceDictionary>
+	</Application.Resources>
+</Application>
