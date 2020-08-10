@@ -5,14 +5,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:behavior="clr-namespace:GuideOne_Xamarin.Behaviors"
              mc:Ignorable="d"
-             x:Class="GuideOne_Xamarin.LoginPage">
+             x:Class="GuideOne_Xamarin.LoginPage"
+			>
     <ContentPage.Content>
         <StackLayout>
 			<Label x:Name="systeminfo" VerticalOptions="Start" HorizontalOptions="Start" TextColor="Gray"/>
 			<Label Text="Вход"
                 VerticalOptions="Center" 
                 HorizontalOptions="Center" />
-			<Entry x:Name="Phone" Keyboard="Numeric" Placeholder="Номер телефона" HorizontalOptions="Center" FontSize="Large">
+			<Entry x:Name="Phone" Keyboard="Numeric"  WidthRequest="250" Placeholder="Номер телефона" HorizontalTextAlignment="Center" HorizontalOptions="Center" FontSize="Large">
 				<Entry.Behaviors>
 					<behavior:MaskedBehavior Mask="+7 (xxx) xxx-xxxx" Entity="{x:Reference Submit}"/>
 				</Entry.Behaviors>

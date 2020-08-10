@@ -7,13 +7,13 @@ namespace GuideOne_Xamarin.Helpers
 {
 	public abstract class Entity
 	{
-		//[PrimaryKey]
+		[PrimaryKey]
 		public virtual int Id { get; set; }
-		//[NotNull]
-		//public DateTime dt {get; set;}
-		//public Entity()
-		//{
-		//	dt = DateTime.UtcNow;
-		//}
+		[NotNull]
+		public virtual DateTime dt { get; set; }
+		public Entity()
+		{
+			dt = DateTime.UtcNow;
+		}
 	}
 }

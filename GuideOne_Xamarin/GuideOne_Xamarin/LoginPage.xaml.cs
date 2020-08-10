@@ -26,6 +26,7 @@ namespace GuideOne_Xamarin
 		{
 			if (Conf.User == null)
 				Navigation.PopAsync();
+			Title = "Авторизация";
 			InitializeComponent();
 			Task.Run(() =>
 			{
@@ -39,15 +40,25 @@ namespace GuideOne_Xamarin
 			});
 		}
 
+		protected async override void OnAppearing()
+		{
+			if (Conf.User != null && Conf.User.IsConfirmed)
+			{
+				var mp = new MainPage();
+				Navigation.InsertPageBefore(mp, this);
+				await Navigation.PopAsync(true);
+			}
+		}
+
 		async void OnButtonClicked(object sender, System.EventArgs e)
 		{
 			Button button = (Button)sender;
 			button.IsEnabled = false;
 			systeminfo.Text = (string)HTTPConector.Resources["ServerUriPrefix"] + (string)HTTPConector.Resources["ServerUri"];
-
+			Conf.User.Phone = Phone.Text.Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", "");
 			var json = new
 			{
-				Phone = Phone.Text.Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", ""),
+				Phone = Conf.User.Phone,
 				PublicKey = Conf.CryptoProvider.ToXmlString(false)
 			};
 			var httpConnector = new HTTPConector(hash: false);
@@ -58,8 +69,8 @@ namespace GuideOne_Xamarin
 			{
 				resp = await httpConnector.SendAsync<UserMiniSerializer>();
 			}
-			catch (Exception ex) 
-			{ 
+			catch (Exception ex)
+			{
 				systeminfo.Text = ex.Message;
 			}
 

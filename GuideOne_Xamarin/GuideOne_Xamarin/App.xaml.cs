@@ -44,6 +44,8 @@ namespace GuideOne_Xamarin
 					mp = new MainPage();
 			}
 			MainPage = new NavigationPage(mp);
+			((NavigationPage)MainPage).BarBackgroundColor = Color.DarkSlateGray;
+			((NavigationPage)MainPage).BarTextColor = Color.White;
 		}
 
 		protected override void OnStart()

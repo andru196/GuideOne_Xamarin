@@ -12,25 +12,27 @@ using System.Linq;
 using Xamarin.Android.Net;
 using Plugin.Connectivity;
 using Xamarin.Essentials;
+using System.Net;
+using Android.Provider;
 
 namespace GuideOne_Xamarin.Helpers
 {
 	class HTTPConector 
 	{
-		HttpMethod _method;
 		public HttpMethod Method
 		{
 			get {
-				return _method;
+				return Request.Method;
 			}
 			set
 			{
-				_method = value;
 				if (Request != null)
 					Request.Method = value;
 			}
 		}
 		public HttpResponseMessage Response { get; private set; }
+
+		public event EventHandler ConnectionFailed;
 
 		public (string, object) Content { get; set; }
 		
@@ -55,7 +57,7 @@ namespace GuideOne_Xamarin.Helpers
 		public HTTPConector(HttpMethod method = null, bool hash = true)
 		{
 			Request = new HttpRequestMessage();
-			Method = method ?? HttpMethod.Post;
+			Request.Method = method ?? HttpMethod.Post;
 			NeedHash = hash;
 		}
 
@@ -64,10 +66,10 @@ namespace GuideOne_Xamarin.Helpers
 		/// </summary>
 		/// <typeparam name="T">Класс, которым будет сериализоваться пользователь</typeparam>
 		/// <returns></returns>
-		public async  Task<string> SendAsync<T>() where T: UserMiniSerializer, new()
+		public async Task<string> SendAsync<T>(bool getRaw = false) where T : UserMiniSerializer, new()
 		{
 			(string contentJson, string hash) = CreateContent<T>();
-			
+
 			Request.Headers.Add("hash", hash);
 
 			Request.Content = new StringContent(contentJson, Encoding.UTF8, "application/json");
@@ -75,11 +77,21 @@ namespace GuideOne_Xamarin.Helpers
 			//TODO:
 			//Общее решение при не доступности сервера
 			if (!await ServerAvailable(Request.RequestUri))
+			{
+				ConnectionFailed.Invoke(this, null);
 				return " Не доступен";
-
+			}
 			using (var client = GetClient())
 			{
 				Response = await client.SendAsync(Request);
+			}
+			if (getRaw)
+				return null;
+
+			if (!Response.IsSuccessStatusCode)
+			{
+				ConnectionFailed.Invoke(this, null);
+				return null;
 			}
 
 			if (Response.Content.Headers.ContentType.MediaType == "application/octet-stream")
@@ -112,7 +124,9 @@ namespace GuideOne_Xamarin.Helpers
 				jso.Converters.Add(new  T());
 				string user = JsonSerializer.Serialize(Conf.User, jso);
 				var contentJson = $"{{{user}," +
-					(Content.Item1 == null && Content.Item2 == null ? "" : $"\"{Content.Item1}\":{JsonSerializer.Serialize(Content.Item2)},") +
+					(Content.Item1 == null && Content.Item2 == null 
+					? "" 
+					: $"\"{Content.Item1}\":{JsonSerializer.Serialize(Content.Item2,new JsonSerializerOptions { IgnoreNullValues = true })},") +
 					$"\"CrDt\":\"{DateTime.UtcNow:s}\"}}";
 				var body = Encoding.UTF8.GetBytes(contentJson);
 				var token = Encoding.ASCII.GetBytes(Conf.User.Token);

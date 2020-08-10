@@ -14,6 +14,8 @@ namespace GuideOne_Xamarin.Helpers
 			database = new SQLiteConnection(databasePath);
 			//database.DropTable<User>();
 			database.CreateTable<User>();
+			//database.DropTable<Record>();
+			database.CreateTable<Record>();
 		}
 		public T GetItem<T>(int id) where T : Entity, new()
 		{
@@ -21,7 +23,7 @@ namespace GuideOne_Xamarin.Helpers
 		}
 		public IEnumerable<T> GetItems<T>() where T: Entity, new()
 		{
-			return database.Table<T>().ToList();
+			return database.Table<T>();
 		}
 		public int DeleteItem<T>(int id) where T : Entity, new()
 		{
@@ -34,6 +36,14 @@ namespace GuideOne_Xamarin.Helpers
 				return database.Update(item, typeof(T));
 			else
 				return database.Insert(item, typeof(T));
+		}
+
+		public int SaveItems<T>(IEnumerable<T> items) where T : Entity, new()
+		{
+			var i = 0;
+			foreach (var item in items)
+				i += SaveItem<T>(item);
+			return i;
 		}
 		public IEnumerable<T> Query<T>(string query, params object[] prms) where T : Entity, new()
 		{

@@ -7,6 +7,9 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 using Android;
+using Android.Support.V4.Content;
+using Android.Support.V4.App;
+using MediaManager;
 
 namespace GuideOne_Xamarin.Droid
 {
@@ -18,7 +21,10 @@ namespace GuideOne_Xamarin.Droid
         readonly string[] LocationPermissions =
         {
             Manifest.Permission.AccessCoarseLocation,
-            Manifest.Permission.AccessFineLocation
+            Manifest.Permission.AccessFineLocation,
+            Manifest.Permission.WriteExternalStorage,
+            Manifest.Permission.ReadExternalStorage
+
         };
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -31,6 +37,7 @@ namespace GuideOne_Xamarin.Droid
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             Xamarin.FormsMaps.Init(this, savedInstanceState);
             LoadApplication(new App());
+            CrossMediaManager.Current.Init(this);
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
@@ -42,11 +49,16 @@ namespace GuideOne_Xamarin.Droid
         {
             base.OnStart();
             Window.SetFlags(WindowManagerFlags.LayoutNoLimits, WindowManagerFlags.LayoutNoLimits);
-
-
+            //TODO: Это должно быть в момент записи
+            if (ContextCompat.CheckSelfPermission(this, Manifest.Permission.RecordAudio) != Permission.Granted)
+            {
+                ActivityCompat.RequestPermissions(this, new String[] { Manifest.Permission.RecordAudio }, 1);
+            }
             if ((int)Build.VERSION.SdkInt >= 23)
             {
-                if (CheckSelfPermission(Manifest.Permission.AccessFineLocation) != Permission.Granted)
+                if (CheckSelfPermission(Manifest.Permission.AccessFineLocation) != Permission.Granted
+                    || CheckSelfPermission(Manifest.Permission.ReadExternalStorage) != Permission.Granted
+                    || CheckSelfPermission(Manifest.Permission.WriteExternalStorage) != Permission.Granted)
                 {
                     RequestPermissions(LocationPermissions, RequestLocationId);
                 }
@@ -54,6 +66,7 @@ namespace GuideOne_Xamarin.Droid
                 {
                     // Permissions already granted - display a message.
                 }
+
             }
         }
         //public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)

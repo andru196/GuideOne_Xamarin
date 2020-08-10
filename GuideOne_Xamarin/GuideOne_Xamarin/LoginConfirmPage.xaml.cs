@@ -28,6 +28,8 @@ namespace GuideOne_Xamarin
 			{
 				Navigation.PopAsync();
 			}
+			else
+				Info.Text = Conf.User.Phone;
 		}
 
 
@@ -45,7 +47,7 @@ namespace GuideOne_Xamarin
 				resp = await httpConnector.SendAsync<UserMiniSerializer>();
 			}
 			catch (Exception ex)
-			{	
+			{
 				systeminfo.Text = ex.Message;
 			}
 			if (httpConnector.Response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -62,7 +64,8 @@ namespace GuideOne_Xamarin
 					Conf.User.IsConfirmed = true;
 					App.Database.SaveItem(Conf.User);
 					var mp = new MainPage();
-					await Navigation.PushAsync(mp);
+					Navigation.InsertPageBefore(mp, this);
+					await Navigation.PopAsync(true);
 				}
 				else
 				{

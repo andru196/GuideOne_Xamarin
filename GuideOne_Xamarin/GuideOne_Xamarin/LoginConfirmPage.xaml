@@ -5,16 +5,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:behavior="clr-namespace:GuideOne_Xamarin.Behaviors"
              mc:Ignorable="d"
-             x:Class="GuideOne_Xamarin.LoginConfirmPage">
+             x:Class="GuideOne_Xamarin.LoginConfirmPage"
+			 Title="Подтверждение">
     <ContentPage.Content>
         <StackLayout>
 			<Label x:Name="systeminfo" VerticalOptions="Start" HorizontalOptions="Start" TextColor="Gray"/>
-			<Label Text="Подтверждение" x:Name="Info"
+			<Label x:Name="Info" Text="blya"
                 VerticalOptions="Center" 
                 HorizontalOptions="Center" />
 			<Entry x:Name="Code" Keyboard="Numeric" Placeholder="Введите код" HorizontalOptions="Center" FontSize="Large">
 				<Entry.Behaviors>
-					<behavior:MaskedBehavior Mask="xxx-xxx" Entity="{x:Reference Submit}"/>
+					<behavior:MaskedBehavior Mask="xxx-xxx" Entity="{x:Reference Name=Submit}"/>
 				</Entry.Behaviors>
 			</Entry>
 			<Button x:Name="Submit" Text="Войти" FontSize="Large" HorizontalOptions="Center" IsEnabled="False" WidthRequest="200"
